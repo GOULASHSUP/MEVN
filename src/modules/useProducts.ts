@@ -28,10 +28,39 @@ export const useProducts = () => {
         }
     }
 
+    const deleteProduct = async (id: string): Promise<void> => {
+        try {
+            const token = localStorage.getItem('lsToken')
+            if (!token) {
+                throw new Error('No token available');
+            }
+            console.log("id test", id)
+            const response = await fetch(`https://ments-restapi.onrender.com/api/products/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'auth-token': token
+            }
+        })
+
+        if (!response.ok) {
+            throw new Error('No data available');
+        }
+
+        products.value = products.value.filter(product => product._id !== id)
+        console.log("product deleted", id)
+
+    }
+
+        catch (err) {
+            error.value = (err as Error).message
+        }
+    }
+
     return { 
         error, 
         loading, 
         products, 
-        fetchProducts 
+        fetchProducts,
+        deleteProduct
     }
 }
